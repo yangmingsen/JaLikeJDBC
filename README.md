@@ -29,7 +29,7 @@ DB db = new DB(conn);
 
 
 ## Operations
-注意：所有API操作都是使用Java 8 的Lambda表达式进行操作.
+所有API操作 可以使用对象作为参数,也可以使用Java 8的Lambda表达式进行操作.
 
 ### Query API
 
@@ -40,7 +40,7 @@ JaLikeJDBC有下面几种查询方式
 他们最终使用 `java.sql.PreparedStatement#executeQuery()`进行db操作.
 
 
-#### 假设db有下面数据
+#### 假设db有下面数据(对应表tag,对象Tag)
 ```$xslt
 +------------------+--------------+---------------------+
 | id               | tag_name     | created_time        |
@@ -86,9 +86,16 @@ if (tagName.isPresent()) {
 
 //定义实体类
 class Tag(id: Long, tagName: String, createdTime: String)
+
+方式1:
 Optional<Tag> tag = db.readOnly(session -> 
     session.asOne("select * from tag where id=?", params, rs -> 
         new Tag(rs.getLong("id"), rs.getString("tag_name"), rs.getString("created_time"))));
+
+方式2:
+Optional<Tag> tag = db.readOnly(session -> 
+    session.asOne("select * from tag where id=?", params, Tag.class));
+       
 
 if (tag.isPresent()) {
     System.out.println(tag.get().toString()); //输出tag实体信息
@@ -101,14 +108,20 @@ if (tag.isPresent()) {
 
 ```java
 //查找所有
+方式1:
 List<Tag> tags = db.readOnly(session -> 
     session.asList("select * from tag",null, rs -> 
         new Tag(rs.getLong("id"), rs.getString("tag_name"), rs.getString("created_time"))));
 
-tags.stream().forEach(x -> System.out.println(x.toString()));//s输出
+方式2:
+List<Tag> tags = db.readOnly(session -> 
+    session.asList("select * from tag",null, Tag.class));
+
+输出: 
+tags.stream().forEach(x -> System.out.println(x.toString()));//输出
 
 
-//模糊查询
+//模糊查询（如果查询的结果是对象，也可以使用Tag.class作为参数）
 Object [] params = {"%2019%"};
 List<Tag> tagLikes = db.readOnly(session -> 
     session.asList("select * from tag where created_time like ?",params, rs -> 

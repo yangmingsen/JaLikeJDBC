@@ -23,6 +23,7 @@ public class Tx {
         return ok;
     }
 
+    //回滚
     public void rollback() {
         try {
             conn.rollback();
@@ -36,6 +37,7 @@ public class Tx {
         }
     }
 
+    //提交
     public void commit() {
         try {
             conn.commit();
@@ -49,6 +51,7 @@ public class Tx {
         }
     }
 
+    //开始
     public void begin() {
         try {
             conn.setAutoCommit(false);

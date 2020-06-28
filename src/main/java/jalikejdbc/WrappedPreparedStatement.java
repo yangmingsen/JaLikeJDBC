@@ -110,4 +110,21 @@ public class WrappedPreparedStatement {
     }
 
 
+    public void setFloat(int parameterIndex, Float x) {
+        try {
+            underlying.setFloat(parameterIndex, x);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setShort(int parameterIndex, Short x) {
+        try {
+            underlying.setShort(parameterIndex, x);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
